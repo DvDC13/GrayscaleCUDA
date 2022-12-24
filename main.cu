@@ -4,6 +4,8 @@
 #include "stb_image.h"
 #include "stb_image_write.h"
 
+#include "grayscaleCPU.h"
+
 int main(int argc, char **argv)
 {
     if (argc != 2)
@@ -11,6 +13,8 @@ int main(int argc, char **argv)
         std::cerr << "Usage: " << argv[0] << " <image file>" << std::endl;
         return 1;
     }
+
+    std::cout << "Beginning image processing..." << std::endl;
 
     int width, height, nrChannels;
     unsigned char *imageData = stbi_load(argv[1], &width, &height, &nrChannels, 4);
@@ -21,15 +25,15 @@ int main(int argc, char **argv)
         return 1;
     }
 
+    std::cout << "Image loaded successfully!" << std::endl;
+
     std::cout << "Image width: " << width << std::endl;
     std::cout << "Image height: " << height << std::endl;
     std::cout << "Number of channels: " << nrChannels << std::endl;
 
-
-
-
-
-
+    std::cout << "Processing image..." << std::endl;
+    std::cout << "Converting image to grayscale..." << std::endl;
+    ConvertToGrayscaleCPU(imageData, width, height, nrChannels);
 
     std::cout << "Writing image to file..." << std::endl;
     std::string outputFileName = argv[1];
