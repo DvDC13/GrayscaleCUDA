@@ -7,6 +7,8 @@
 #include "grayscaleCPU.h"
 #include "grayscaleGPU.cuh"
 
+#define BLOCK_SIZE 32
+
 int main(int argc, char **argv)
 {
     if (argc != 2)
@@ -36,17 +38,21 @@ int main(int argc, char **argv)
     std::cout << "Converting image to grayscale..." << std::endl;
 
     unsigned char *imageDataDevice = nullptr;
+    std::cout << "Allocating memory on GPU..." << std::endl;
     cudaMalloc(&imageDataDevice, width * height * nrChannels);
+    std::cout << "Copying image data to GPU..." << std::endl;
     cudaMemcpy(imageDataDevice, imageData, width * height * nrChannels, cudaMemcpyHostToDevice);
     
-    //ConvertToGrayscaleCPU(imageData, width, height, nrChannels);
-    // Launch the kernel
-    dim3 block(32, 32);
+    std::cout << "Launching kernel..." << std::endl;
+    dim3 block(BLOCK_SIZE, BLOCK_SIZE);
+    std::cout << "Block size: " << block.x << "x" << block.y << std::endl;
     dim3 grid((width + block.x - 1) / block.x, (height + block.y - 1) / block.y);
+    std::cout << "Grid size: " << grid.x << "x" << grid.y << std::endl;
     ConvertToGrayscaleGPU<<<grid, block>>>(imageDataDevice, nrChannels);
     cudaDeviceSynchronize();
 
     cudaMemcpy(imageData, imageDataDevice, width * height * nrChannels, cudaMemcpyDeviceToHost);
+    std::cout << "Image processed successfully!" << std::endl;
 
     std::cout << "Writing image to file..." << std::endl;
     std::string outputFileName = argv[1];
