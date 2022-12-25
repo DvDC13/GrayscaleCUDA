@@ -5,6 +5,7 @@
 #include "stb_image_write.h"
 
 #include "grayscaleCPU.h"
+#include "grayscaleGPU.cuh"
 
 int main(int argc, char **argv)
 {
@@ -33,14 +34,30 @@ int main(int argc, char **argv)
 
     std::cout << "Processing image..." << std::endl;
     std::cout << "Converting image to grayscale..." << std::endl;
-    ConvertToGrayscaleCPU(imageData, width, height, nrChannels);
+
+    unsigned char *imageDataDevice = nullptr;
+    cudaMalloc(&imageDataDevice, width * height * nrChannels);
+    cudaMemcpy(imageDataDevice, imageData, width * height * nrChannels, cudaMemcpyHostToDevice);
+    
+    //ConvertToGrayscaleCPU(imageData, width, height, nrChannels);
+    // Launch the kernel
+    dim3 block(32, 32);
+    dim3 grid((width + block.x - 1) / block.x, (height + block.y - 1) / block.y);
+    ConvertToGrayscaleGPU<<<grid, block>>>(imageDataDevice, nrChannels);
+    cudaDeviceSynchronize();
+
+    cudaMemcpy(imageData, imageDataDevice, width * height * nrChannels, cudaMemcpyDeviceToHost);
 
     std::cout << "Writing image to file..." << std::endl;
     std::string outputFileName = argv[1];
     outputFileName = outputFileName.substr(0, outputFileName.find_last_of('.')) + "_grayscale.png";
     stbi_write_png(outputFileName.c_str(), width, height, nrChannels, imageData, width * nrChannels);
 
+    cudaFree(imageDataDevice);
     stbi_image_free(imageData);
+
+    cudaDeviceReset();
+
     std::cout << "Done!" << std::endl;
     return 0;
 }
