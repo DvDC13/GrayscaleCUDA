@@ -1,9 +1,6 @@
 #include <iostream>
 #include <string>
 
-#include "stb_image.h"
-#include "stb_image_write.h"
-
 #include "grayscaleCPU.h"
 #include "grayscaleGPU.cuh"
 
