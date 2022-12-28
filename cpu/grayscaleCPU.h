@@ -1,3 +1,3 @@
 #pragma once
 
-void ConvertToGrayscaleCPU(unsigned char* imageRGBA, int width, int height, int channels);
+void ConvertToGrayscaleCPU(unsigned char* imageRGBA, int width, int height);

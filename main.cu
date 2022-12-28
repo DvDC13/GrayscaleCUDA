@@ -8,16 +8,48 @@
 
 #define BLOCK_SIZE 16
 
+enum Type
+{
+    CPU,
+    GPU
+};
+
+void CheckArguments(int argc, char **argv, Type &type)
+{
+    if (argc != 3)
+    {
+        std::cerr << "Usage: " << argv[0] << " <image file | -h | --help>" << " <--cpu | --gpu>" << std::endl;
+        exit(1);
+    }
+    else if (std::string(argv[1]) == "-h" || std::string(argv[1]) == "--help")
+    {
+        std::cout << "Usage: " << argv[0] << " <image file | -h | --help>" << " <--cpu | --gpu>" << std::endl;
+        exit(0);
+    }
+
+    std::string arg = argv[2];
+    if (arg == "--cpu")
+    {
+        type = CPU;
+    }
+    else if (arg == "--gpu")
+    {
+        type = GPU;
+    }
+    else
+    {
+        std::cerr << "Usage: " << argv[0] << " <image file | -h | --help>" << " <--cpu | --gpu>" << std::endl;
+        exit(1);
+    }
+}
+
 int main(int argc, char **argv)
 {
     // ----------------SETUP---------------- //
 
     // Check for correct number of arguments
-    if (argc != 2)
-    {
-        std::cerr << "Usage: " << argv[0] << " <image file>" << std::endl;
-        return 1;
-    }
+    Type type;
+    CheckArguments(argc, argv, type);
 
     std::cout << "Beginning image processing..." << std::endl;
 
@@ -40,7 +72,19 @@ int main(int argc, char **argv)
 
     // ----------------PROCESSING---------------- //
 
-    ConvertToGrayscaleGPU(image.data, image.rows, image.cols, BLOCK_SIZE);
+    switch (type)
+    {
+    case CPU:
+        std::cout << "Converting image to grayscale using CPU..." << std::endl;
+        ConvertToGrayscaleCPU(image.data, image.rows, image.cols);
+        break;
+    case GPU:
+        std::cout << "Converting image to grayscale using GPU..." << std::endl;
+        ConvertToGrayscaleGPU(image.data, image.rows, image.cols, BLOCK_SIZE);
+        break;
+    default:
+        break;
+    }
 
     // ----------------OUTPUT---------------- //
 
