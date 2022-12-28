@@ -40,29 +40,7 @@ int main(int argc, char **argv)
 
     // ----------------PROCESSING---------------- //
 
-    std::cout << "Processing image..." << std::endl;
-    std::cout << "Converting image to grayscale..." << std::endl;
-
-    unsigned char *imageDataDevice = nullptr;
-    std::cout << "Allocating memory on GPU..." << std::endl;
-    cudaMalloc(&imageDataDevice, image.cols * image.rows * 3);
-    std::cout << "Copying image data to GPU..." << std::endl;
-    cudaMemcpy(imageDataDevice, image.data, image.cols * image.rows * 3, cudaMemcpyHostToDevice);
-    
-    std::cout << "Launching kernel..." << std::endl;
-
-    dim3 block(BLOCK_SIZE, BLOCK_SIZE, 1);
-    std::cout << "Block size: " << block.x << "x" << block.y << std::endl;
-
-    dim3 grid((image.cols + block.x - 1) / block.x, (image.rows + block.y - 1) / block.y, 1);
-    std::cout << "Grid size: " << grid.x << "x" << grid.y << std::endl;
-
-    ConvertToGrayscaleGPU<<<grid, block>>>(imageDataDevice);
-    cudaDeviceSynchronize();
-
-    std::cout << "Copying image data back to CPU..." << std::endl;
-    cudaMemcpy(image.data, imageDataDevice, image.cols * image.rows * 3, cudaMemcpyDeviceToHost);
-    std::cout << "Image processed successfully!" << std::endl;
+    ConvertToGrayscaleGPU(image.data, image.rows, image.cols, BLOCK_SIZE);
 
     // ----------------OUTPUT---------------- //
 
@@ -76,11 +54,10 @@ int main(int argc, char **argv)
     std::cout << "Output filename: " << outputFilename << std::endl;
     cv::imwrite(outputFilename, image);
 
-    cudaFree(imageDataDevice);
+     // ----------------CLEANUP---------------- //
+
     image.release();
 
-    cudaDeviceReset();
-
-    std::cout << "Done!" << std::endl;
+    std::cout << "Image processing complete!" << std::endl;
     return 0;
 }

@@ -3,4 +3,4 @@
 #include <cuda_runtime.h>
 #include <device_launch_parameters.h>
 
-__global__ void ConvertToGrayscaleGPU(unsigned char* imageRGBA);
+void ConvertToGrayscaleGPU(unsigned char* image, int rows, int cols, int blockSize);
