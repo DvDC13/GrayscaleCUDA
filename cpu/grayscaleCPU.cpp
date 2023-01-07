@@ -1,10 +1,15 @@
 #include "grayscaleCPU.h"
 #include "pixel.h"
 
+#include <iostream>
+#include <chrono>
+
 #define channels 3
 
 void ConvertToGrayscaleCPU(unsigned char* imageRGBA, int width, int height)
 {
+    auto start = std::chrono::high_resolution_clock::now();
+
     for (int y = 0; y < height; y++)
     {
         for (int x = 0; x < width; x++)
@@ -19,4 +24,9 @@ void ConvertToGrayscaleCPU(unsigned char* imageRGBA, int width, int height)
             pixel->blue = pixelGray;
         }
     }
+
+    auto end = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> elapsed = end - start;
+
+    std::cout << "CPU grayscale conversion took " << elapsed.count() * 1e3 << " ms" << std::endl;
 }

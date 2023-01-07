@@ -62,7 +62,7 @@ void ConvertToGrayscaleGPU(unsigned char* image, int rows, int cols, int blockSi
 
    // ----------------TIMING---------------- //
 
-    std::cout << std::endl << std::endl << "Kernel Time execution taken: " << milliseconds << "ms" << std::endl;
+    std::cout << std::endl << std::endl << "Kernel Time execution taken: " << milliseconds << " ms" << std::endl;
     std::cout << std::endl << std::endl;
 
     cudaXFree(imageDataDevice);

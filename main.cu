@@ -90,15 +90,16 @@ int main(int argc, char **argv)
 
     std::cout << "Writing image to file..." << std::endl;
 
-    std::string outputFilename = argv[1];
-    outputFilename = outputFilename.substr(0, outputFilename.find_last_of('.')) + "_output.";
-    std::string extension = argv[1];
-    extension = extension.substr(extension.find_last_of('.') + 1);
-    outputFilename += extension;
-    std::cout << "Output filename: " << outputFilename << std::endl;
-    cv::imwrite(outputFilename, image);
+    std::string path = argv[1];
+    path = path.substr(0, path.find_last_of('/')) + "/results/";
+    path += "grayscale_" + std::string(argv[1]).substr(std::string(argv[1]).find_last_of('/') + 1);
+    std::cout << "Writing to " << path << std::endl;
+    cv::imwrite(path, image);
 
-     // ----------------CLEANUP---------------- //
+    // write image result in a folder results
+    
+
+    // ----------------CLEANUP---------------- //
 
     image.release();
 
