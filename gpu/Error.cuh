@@ -4,6 +4,7 @@
 #include <device_launch_parameters.h>
 
 #include <stdio.h>
+#include <stdlib.h>
 
 #define CUDA_ERROR_CHECK { gpuAssert(__FILE__, __LINE__); }
 
