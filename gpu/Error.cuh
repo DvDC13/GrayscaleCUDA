@@ -6,11 +6,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define CUDA_ERROR_CHECK { gpuAssert(__FILE__, __LINE__); }
+#define CUDA_ERROR_CHECK(x) { gpuAssert((x), __FILE__, __LINE__); }
 
-inline void gpuAssert(const char *file, int line, bool abort=true)
+inline void gpuAssert(cudaError_t code, const char *file, int line, bool abort=true)
 {
-    cudaError_t code = cudaGetLastError();
     if (code != cudaSuccess) 
     {
         fprintf(stderr,"GPUassert: %s %s %d\n", cudaGetErrorString(code), file, line);
